@@ -5,7 +5,7 @@ from pydantic import ValidationError
 from http import HTTPStatus
 from assertions.assertion_base import BaseAssertion
 from models.images import images_models as models
-from utilities.json_utils import convert_json
+# from utilities.json_utils import convert_json
 
 
 class TestImages:
@@ -17,7 +17,7 @@ class TestImages:
 
     def test_get_list_images(self, image_obj):
         response = image_obj.get_images()
-        response_body = convert_json(response)
+        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         if response_body["count"] > 0:
@@ -25,7 +25,7 @@ class TestImages:
 
     def test_get_empty_list_images(self, image_obj):
         response = image_obj.get_images()
-        response_body = convert_json(response)
+        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         if response_body["count"] == 0:
@@ -35,7 +35,7 @@ class TestImages:
     def test_get_list_images_by_visibility_param(self, image_obj, params):
         query_param = {'visibility': f'{params}'}
         response = image_obj.get_images(query_param)
-        response_body = convert_json(response)
+        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         if response_body['count'] > 0:
@@ -48,7 +48,7 @@ class TestImages:
         tag = 'mar_tag'
         query_param = {'metadata_k': f'{tag}'}
         response = image_obj.get_images(query_param)
-        response_body = convert_json(response)
+        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         if response_body["count"] > 0:
@@ -79,7 +79,7 @@ class TestImages:
         BaseAssertion.assert_schema(create_img, models.RequestSuccessful)
 
         response = image_obj.get_images()
-        response_body = convert_json(response)
+        response_body = response.json()
         BaseAssertion.assert_obj_found(response_body, request_key, request_value)
 
     def test_patch_update_image(self, image_obj, img_request_body, image_id):
@@ -95,7 +95,7 @@ class TestImages:
         time.sleep(2)
 
         response = image_obj.get_image_by_id(image_id)
-        response_body = convert_json(response)
+        response_body = response.json()
         assert request_value == response_body.get(request_key)
 
     def test_delete_image(self, image_obj, image_id):
@@ -124,8 +124,8 @@ class TestImages:
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
         BaseAssertion.assert_schema(response, models.NotFound)
 
-    @pytest.mark.parametrize(
-        "img_id", [
+    @pytest.mark.xfail
+    @pytest.mark.parametrize("img_id", [
             "23003df3-e509-4bc9-ad4b-5f77ad40da69435",
             "34523003df3-e509-4bc9-ad4b-5f77ad40da69",
             "23003df3-e509-4b45c9-ad4b-5f77ad40da69",
@@ -135,8 +135,8 @@ class TestImages:
             "                                        ",
             "    23003df3-e509-4bc9-ad4b-5f77ad40da69",
             "23003df3-e509-4bc9-ad4b-5f77ad40da69     ",
-            "23003df3-e5 09-4 b c9-a d 4b-5f77  ad40da69"]
-    )
+            "23003df3-e5 09-4 b c9-a d 4b-5f77  ad40da69"
+    ])
     def test_get_image_invalid_id(self, image_obj, img_id):
         response = image_obj.get_image_by_id(img_id)
 

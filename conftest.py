@@ -4,7 +4,6 @@ import time
 from api.api_client import ApiClient
 from api.api_requests import ImagesRequests
 from assertions.assertion_base import BaseAssertion
-from utilities.json_utils import convert_json
 
 
 @pytest.fixture(scope='class')
@@ -46,7 +45,7 @@ def image_id(image_obj, create_img, img_request_body):
     request_value = img_request_body.get(request_key)
 
     response = image_obj.get_images()
-    response_body = convert_json(response)
+    response_body = response.json()
     img_id = BaseAssertion.assert_obj_found(response_body, request_key, request_value)
     yield img_id
     image_obj.delete_image(img_id)
