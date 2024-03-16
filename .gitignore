@@ -159,4 +159,5 @@ fabric.properties
 .env
 venv
 allure_results
+__pycache__/
 

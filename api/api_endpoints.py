@@ -1,9 +1,5 @@
-from enum import Enum
 import os
-# from dotenv import load_dotenv
-
-
-# load_dotenv()
+from enum import Enum
 
 
 class Endpoints(str, Enum):
