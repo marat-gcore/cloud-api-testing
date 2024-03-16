@@ -5,7 +5,6 @@ from pydantic import ValidationError
 from http import HTTPStatus
 from assertions.assertion_base import BaseAssertion
 from models.images import images_models as models
-# from utilities.json_utils import convert_json
 
 
 class TestImages:
