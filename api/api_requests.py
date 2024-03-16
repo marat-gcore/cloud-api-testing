@@ -1,4 +1,4 @@
-from api import api_endpoints
+from api.api_endpoints import Endpoints
 
 
 class BaseRequests:
@@ -6,7 +6,7 @@ class BaseRequests:
         self.__client = client
         self.__bearer_token = bearer_token
         self.__headers = {'Authorization': f"Bearer {self.__bearer_token}"}
-        self.endpoint_images = api_endpoints.ImagesEndpoints.IMAGES
+        self.endpoint_images = Endpoints.IMAGES
 
     def get_obj(self, endpoint, params):
         return self.__client.get(endpoint, headers=self.__headers, params=params)
