@@ -1,7 +1,6 @@
 import pytest
 import json
 import time
-from pydantic import ValidationError
 from http import HTTPStatus
 from assertions.assertion_base import BaseAssertion
 from models.images import images_models as models
@@ -16,46 +15,39 @@ class TestImages:
 
     def test_get_list_images(self, image_obj):
         response = image_obj.get_images()
-        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response_body["count"] > 0:
-            BaseAssertion.assert_schema(response, models.ListImages)
+        BaseAssertion.assert_schema(response, models.ListImages)
+        if response.json()["count"] > 0:
+            BaseAssertion.assert_schema(response.json()["results"], models.Image)
 
     def test_get_empty_list_images(self, image_obj):
         response = image_obj.get_images()
-        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response_body["count"] == 0:
-            assert response_body["results"] == []
+        if response.json()["count"] == 0:
+            assert response.json()["results"] == []
 
     @pytest.mark.parametrize("params", ['private', 'public', 'shared'])
     def test_get_list_images_by_visibility_param(self, image_obj, params):
         query_param = {'visibility': f'{params}'}
         response = image_obj.get_images(query_param)
-        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response_body['count'] > 0:
-            for item in response_body['results']:
+        if response.json()['count'] > 0:
+            for item in response.json()['results']:
                 assert item['visibility'] == f'{params}'
-        else:
-            assert response_body["results"] == []
 
     def test_get_list_images_by_metadata_k_param(self, image_obj):
         tag = 'mar_tag'
         query_param = {'metadata_k': f'{tag}'}
         response = image_obj.get_images(query_param)
-        response_body = response.json()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response_body["count"] > 0:
-            for item in response_body['results']:
+        if response.json()["count"] > 0:
+            for item in response.json()['results']:
                 for key in item['metadata'].keys():
                     assert key == tag
-        else:
-            assert response_body["results"] == []
 
     def test_get_image_by_id(self, image_obj, image_id):
         response = image_obj.get_image_by_id(image_id)
@@ -78,8 +70,7 @@ class TestImages:
         BaseAssertion.assert_schema(create_img, models.RequestSuccessful)
 
         response = image_obj.get_images()
-        response_body = response.json()
-        BaseAssertion.assert_obj_found(response_body, request_key, request_value)
+        BaseAssertion.assert_obj_found(response, request_key, request_value)
 
     def test_patch_update_image(self, image_obj, img_request_body, image_id):
         request_body = {
@@ -101,7 +92,7 @@ class TestImages:
         response = image_obj.delete_image(image_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.RequestSuccessful)
-        time.sleep(5)
+        time.sleep(2)
 
         response = image_obj.get_image_by_id(image_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
@@ -143,8 +134,7 @@ class TestImages:
         try:
             BaseAssertion.assert_schema(response, models.NotFound)
         except json.JSONDecodeError:
-            print("The response body does not match the model!")
-            raise ValidationError
+            assert False, "The response body does not match the model!"
 
     def test_post_create_image_no_request_body(self, image_obj):
         request_body = None

@@ -1,5 +1,5 @@
-from typing import Type
-from pydantic import BaseModel, ValidationError
+from typing import List
+from pydantic import TypeAdapter
 from logs.custom_errors import CodeLogMsg
 
 
@@ -13,16 +13,15 @@ class BaseAssertion:
             .get_message()
 
     @staticmethod
-    def assert_schema(response, model: Type[BaseModel]):
-        body = response.json()
-        if isinstance(body, list):
-            for item in body:
-                model.model_validate(item, strict=True)
+    def assert_schema(response, schema):
+        if isinstance(response, list):
+            TypeAdapter(List[schema]).validate_python(response)
         else:
-            model.model_validate(body, strict=True)
+            schema.model_validate(response.json(), strict=True)
 
     @staticmethod
-    def assert_obj_found(response_body, request_key, request_value):
+    def assert_obj_found(response, request_key, request_value):
+        response_body = response.json()
         if response_body['count'] > 0:
             obj_found = False
             for item in response_body['results']:
@@ -30,8 +29,6 @@ class BaseAssertion:
                     obj_found = True
                     return item.get("id")
             if not obj_found:
-                print("The object was not created")
-                raise ValidationError
+                assert False, "The object was not created"
         else:
-            print("The object was not created")
-            raise ValidationError
+            assert False, "The object was not created"

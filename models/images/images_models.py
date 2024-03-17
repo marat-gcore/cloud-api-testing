@@ -1,13 +1,13 @@
-from typing import List, Dict, Optional
-from pydantic import BaseModel
+from typing import Optional
+from pydantic import BaseModel, Field
 
 
 class Image(BaseModel):
-    metadata: Dict[str, str]
+    metadata: dict[str, str]
     visibility: str
-    os_type: str
+    os_type: Optional[str] = None
     created_at: str
-    ssh_key: str
+    ssh_key: Optional[str] = None
     name: str
     project_id: int
     os_version: Optional[str] = None
@@ -20,15 +20,15 @@ class Image(BaseModel):
     region_id: int
     disk_format: str
     region: str
-    metadata_detailed: List[str] = None
-    display_order: int
-    os_distro: str
+    metadata_detailed: list[str] = None
+    display_order: Optional[int] = None
+    os_distro: Optional[str] = None
     size: int
     min_disk: int
 
 
 class RequestSuccessful(BaseModel):
-    tasks: List[str]
+    tasks: list[str]
 
 
 class PostBadRequest(BaseModel):
@@ -44,7 +44,7 @@ class NotFound(BaseModel):
 
 
 class BadRequest(NotFound):
-    invalid_fields: Dict[str, list]
+    invalid_fields: dict[str, list]
 
 
 class ImageWithPrice(Image):
@@ -55,6 +55,6 @@ class ImageWithPrice(Image):
 
 
 class ListImages(BaseModel):
-    count: int
-    results: List[dict]
+    count: int = Field(ge=0)
+    results: list[dict] | None
 
