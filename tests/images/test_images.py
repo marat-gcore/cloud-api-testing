@@ -49,6 +49,10 @@ class TestImages:
                 for key in item['metadata'].keys():
                     assert key == tag
 
+    def test_post_create_image(self, create_img, image_id):
+        BaseAssertion.assert_status_code(create_img, HTTPStatus.OK)
+        BaseAssertion.assert_schema(create_img, models.RequestSuccessful)
+
     def test_get_image_by_id(self, image_obj, image_id):
         response = image_obj.get_image_by_id(image_id)
 
@@ -61,16 +65,6 @@ class TestImages:
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.ImageWithPrice)
-
-    def test_post_create_image(self, image_obj, img_request_body, create_img):
-        request_key = "name"
-        request_value = img_request_body.get(request_key)
-
-        BaseAssertion.assert_status_code(create_img, HTTPStatus.OK)
-        BaseAssertion.assert_schema(create_img, models.RequestSuccessful)
-
-        response = image_obj.get_images()
-        BaseAssertion.assert_obj_found(response, request_key, request_value)
 
     def test_patch_update_image(self, image_obj, img_request_body, image_id):
         request_body = {

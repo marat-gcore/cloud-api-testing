@@ -1,4 +1,3 @@
-from typing import List
 from pydantic import TypeAdapter
 from logs.custom_errors import CodeLogMsg
 
@@ -15,7 +14,7 @@ class BaseAssertion:
     @staticmethod
     def assert_schema(response, schema):
         if isinstance(response, list):
-            TypeAdapter(List[schema]).validate_python(response)
+            TypeAdapter(list[schema]).validate_python(response)
         else:
             schema.model_validate(response.json(), strict=True)
 
