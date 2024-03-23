@@ -22,12 +22,9 @@ class BaseAssertion:
     def assert_obj_found(response, request_key, request_value):
         response_body = response.json()
         if response_body['count'] > 0:
-            obj_found = False
             for item in response_body['results']:
                 if request_value == item.get(request_key):
-                    obj_found = True
                     return item.get("id")
-            if not obj_found:
-                assert False, "The object was not created"
+            assert False, "The object was not created"
         else:
             assert False, "The object was not created"

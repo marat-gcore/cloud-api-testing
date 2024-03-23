@@ -1,9 +1,9 @@
 import os
+import time
 import pytest
 import allure
-import time
 from httpx import Client
-from api.api_requests import ImagesRequests
+from api.api_requests import ImagesRequests, TasksRequests
 from assertions.assertion_base import BaseAssertion
 
 
@@ -28,6 +28,12 @@ def image_obj(client, bearer_token):
 
 
 @pytest.fixture(scope='class')
+@allure.title("Prepare a task object")
+def task_obj(client, bearer_token):
+    return TasksRequests(client, bearer_token)
+
+
+@pytest.fixture(scope='class')
 @allure.title("Prepare request body")
 def img_request_body():
     return {
@@ -38,10 +44,21 @@ def img_request_body():
 
 @pytest.fixture(scope='class')
 @allure.title("Create image")
-def create_img(image_obj, img_request_body):    
-    response = image_obj.create_image(img_request_body)
-    time.sleep(100)
-    return response
+def create_img(image_obj, task_obj, img_request_body):
+    response_img = image_obj.create_image(img_request_body)
+    response_body_img = response_img.json()
+    task_id = ''.join(response_body_img.get("tasks"))
+
+    timeout = 120
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        response = task_obj.get_task_by_id(task_id)
+        task_state = response.json()["state"]
+        if task_state == "FINISHED":
+            return response_img
+        else:
+            time.sleep(5)
+    print("Image creation failed by time out")
 
 
 @pytest.fixture(scope='class')

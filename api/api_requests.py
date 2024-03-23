@@ -7,6 +7,7 @@ class BaseRequests:
         self.__bearer_token = bearer_token
         self.__headers = {'Authorization': f"Bearer {self.__bearer_token}"}
         self.endpoint_images = Endpoints.IMAGES
+        self.endpoint_tasks = Endpoints.TASKS
 
     def get_obj(self, endpoint, params):
         return self.__client.get(endpoint, headers=self.__headers, params=params)
@@ -36,3 +37,8 @@ class ImagesRequests(BaseRequests):
 
     def delete_image(self, obj_id):
         return self.delete_obj(f"{self.endpoint_images}/{obj_id}")
+
+
+class TasksRequests(BaseRequests):
+    def get_task_by_id(self, obj_id, params=None):
+        return self.get_obj(f"{self.endpoint_tasks}/{obj_id}", params)
