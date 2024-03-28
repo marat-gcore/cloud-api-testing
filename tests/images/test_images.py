@@ -18,14 +18,14 @@ class TestImages:
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.ListImages)
-        if response.json()["count"] > 0:
+        if len(response.json()["results"]) > 0:
             BaseAssertion.assert_schema(response.json()["results"], models.Image)
 
     def test_get_empty_list_images(self, image_obj):
         response = image_obj.get_images()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response.json()["count"] == 0:
+        if len(response.json()["results"]) == 0:
             assert response.json()["results"] == []
 
     @pytest.mark.parametrize("params", ['private', 'public', 'shared'])
@@ -34,17 +34,17 @@ class TestImages:
         response = image_obj.get_images(query_param)
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response.json()['count'] > 0:
+        if len(response.json()["results"]) > 0:
             for item in response.json()['results']:
                 assert item['visibility'] == f'{params}'
 
     def test_get_list_images_by_metadata_k_param(self, image_obj):
-        tag = 'mar_tag'
+        tag = 'test_tag'
         query_param = {'metadata_k': f'{tag}'}
         response = image_obj.get_images(query_param)
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
-        if response.json()["count"] > 0:
+        if len(response.json()["results"]) > 0:
             for item in response.json()['results']:
                 for key in item['metadata'].keys():
                     assert key == tag
@@ -94,7 +94,7 @@ class TestImages:
 
     # -------negative-------
 
-    def test_get_list_images_bad_request(self, image_obj):
+    def test_get_list_images_invalid_visibility_param(self, image_obj):
         query_param = {'visibility': 'somevalue'}
         response = image_obj.get_images(query_param)
 
@@ -163,6 +163,25 @@ class TestImages:
         response = image_obj.create_image(request_body)
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
         BaseAssertion.assert_schema(response, models.NotFound)
+
+    def test_patch_not_exist_id(self, image_obj, img_request_body):
+        request_body = {
+            'name': 'qa-img-changed'
+        }
+        img_id = "9726377c-2991-45be-8fce-ff9521cae512"
+
+        response = image_obj.update_image(img_id, request_body)
+        BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
+        BaseAssertion.assert_schema(response, models.NotFound)
+
+    def test_patch_empty_name(self, image_obj, img_request_body, image_id):
+        request_body = {
+            'name': ''
+        }
+
+        response = image_obj.update_image(image_id, request_body)
+        BaseAssertion.assert_status_code(response, HTTPStatus.BAD_REQUEST)
+        BaseAssertion.assert_schema(response, models.BadRequest)
 
     def test_delete_not_exist_image(self, image_obj):
         image_id = "23003df3-e509-4bc9-ad4b-5f77ad40da6910"
