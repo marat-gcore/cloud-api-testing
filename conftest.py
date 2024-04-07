@@ -2,7 +2,7 @@ import os
 import time
 import pytest
 import allure
-from httpx import Client
+import requests
 from api.api_requests import ImagesRequests, TasksRequests
 from assertions.assertion_base import BaseAssertion
 
@@ -10,7 +10,8 @@ from assertions.assertion_base import BaseAssertion
 @pytest.fixture(scope='class')
 @allure.title("Prepare HTTP client")
 def client():
-    return Client()
+    yield requests.Session()
+    requests.Session().close()
 
 
 @pytest.fixture(scope='class')

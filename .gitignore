@@ -160,5 +160,6 @@ fabric.properties
 venv
 allure-results
 allure-reports
+__pycache__
 *.pyc
 

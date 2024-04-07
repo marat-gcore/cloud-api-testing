@@ -24,7 +24,7 @@ class BaseMsg:
         """
         Additional info about response
         """
-        self._msg += f"Response body :\n\t{self._response.text}\n"
+        self._msg += f"Response body :\n\t{self._response.json()}\n"
         return self
 
     def get_message(self):
