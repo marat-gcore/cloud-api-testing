@@ -158,6 +158,7 @@ fabric.properties
 
 .env
 venv
-allure_results
+allure-results
+allure-reports
 *.pyc
 
