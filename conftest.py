@@ -39,7 +39,7 @@ def task_obj(client, bearer_token):
 def img_request_body():
     return {
         'name': 'qa-img-fixture',
-        'volume_id': '43aff485-5154-499d-a8f1-e9efba93fc30'
+        'volume_id': 'fbfb26d1-37d9-4bd9-82f6-e1d0fd3091c8'
     }
 
 

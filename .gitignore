@@ -159,7 +159,9 @@ fabric.properties
 .env
 venv
 allure-results
-allure-reports
+allure-report
 __pycache__
 *.pyc
+docker-compose__.yml
+Dockerfile__
 
