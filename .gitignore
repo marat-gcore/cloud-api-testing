@@ -161,6 +161,7 @@ venv
 allure-results
 allure-report
 __pycache__
+.pytest_cache
 *.pyc
 docker-compose__.yml
 Dockerfile__
