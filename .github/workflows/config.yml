@@ -1,6 +1,6 @@
 name: API Tests
 
-on: workflow_dispatch
+on: [push]
 
 jobs:
   run-tests:
@@ -16,8 +16,8 @@ jobs:
 #          ref: gh-pages
 #          path: ./.github/gh-pages
 
-      - name: Build image
-        run: docker build -t api-tests-image .
+#      - name: Build image
+#        run: docker build -t api-tests-image .
 
       - name: Run api-tests via docker-compose
         env:
