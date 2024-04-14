@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
 #      - name: Checkout (copy) gh-pages repository to GitHub runner
@@ -15,6 +15,9 @@ jobs:
 #        with:
 #          ref: gh-pages
 #          path: ./.github/gh-pages
+
+      - name: Build image
+        run: docker build -t api-tests-image .
 
       - name: Run api-tests via docker-compose
         env:
@@ -24,9 +27,7 @@ jobs:
           REGION_ID: ${{ secrets.REGION_ID }}
           USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
           PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          docker build -t api-tests-image .
-          docker-compose up --exit-code-from api-tests || true          
+        run: docker-compose up --exit-code-from api-tests || true
 
 #  allure-report:
 #    runs-on: ubuntu-latest
