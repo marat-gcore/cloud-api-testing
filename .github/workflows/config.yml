@@ -24,7 +24,8 @@ jobs:
           REGION_ID: ${{ secrets.REGION_ID }}
           USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
           PASSWORD: ${{ secrets.PASSWORD }}
-        run: docker-compose up --exit-code-from api-tests || true
+        run: docker-compose up
+#        docker-compose up --exit-code-from api-tests || true
 
 #  allure-report:
 #    runs-on: ubuntu-latest
