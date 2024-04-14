@@ -3,6 +3,9 @@ version: '3.7'
 services:
   api-tests:
     image: "api-tests-image"
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./:/app
     command: /bin/sh -c "pytest -sv --alluredir=allure-results"

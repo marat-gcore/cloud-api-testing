@@ -16,9 +16,6 @@ jobs:
 #          ref: gh-pages
 #          path: ./.github/gh-pages
 
-#      - name: Build image
-#        run: docker build -t api-tests-image .
-
       - name: Run api-tests via docker-compose
         env:
           PREPROD_URL: ${{ secrets.PREPROD_URL }}
