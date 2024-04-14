@@ -10,11 +10,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-#      - name: Checkout (copy) gh-pages repository to GitHub runner
-#        uses: actions/checkout@v4
-#        with:
-#          ref: gh-pages
-#          path: ./.github/gh-pages
+      - name: Checkout (copy) gh-pages repository to GitHub runner
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: ./.github/gh-pages
 
       - name: Run api-tests via docker-compose
         env:
@@ -24,8 +24,7 @@ jobs:
           REGION_ID: ${{ secrets.REGION_ID }}
           USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
           PASSWORD: ${{ secrets.PASSWORD }}
-        run: docker-compose up
-#        docker-compose up --exit-code-from api-tests || true
+        run: docker-compose up --exit-code-from api-tests || true
 
 #  allure-report:
 #    runs-on: ubuntu-latest
@@ -43,18 +42,18 @@ jobs:
 #          sudo mkdir -p allure-results/history
 #          sudo cp -R ./.github/gh-pages/history/* allure-results/history/
 
-#      - name: Generate Allure report
-#        run: |
-#          sudo docker-compose run api-tests /bin/sh -c "allure generate allure-results --clean -o allure-report"
+      - name: Generate Allure report
+        run: |
+          sudo docker-compose run api-tests /bin/sh -c "allure generate allure-results --clean -o allure-report"
 
 #      - name: Update Allure history
 #        run: |
 #          sudo cp -R allure-report/history/* ./.github/gh-pages/history/
 
-#      - name: Deploy to GitHub Pages
-#        uses: JamesIves/github-pages-deploy-action@4.1.5
-#        with:
-#          token: ${{ secrets.CI_TOKEN }}
-#          branch: gh-pages
-#          folder: allure-report
-#          clean: true
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          branch: gh-pages
+          folder: allure-report
+          clean: true
