@@ -17,14 +17,14 @@ jobs:
 #          path: ./.github/gh-pages
 
       - name: Run api-tests via docker-compose
-        env:
-          PREPROD_URL: ${{ secrets.PREPROD_URL }}
-          API_AUTH: ${{ secrets.API_AUTH }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          REGION_ID: ${{ secrets.REGION_ID }}
-          USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-        run: docker-compose up api-tests
+        with:
+          url: ${{ secrets.PREPROD_URL }}
+          auth: ${{ secrets.API_AUTH }}
+          project: ${{ secrets.PROJECT_ID }}
+          region: ${{ secrets.REGION_ID }}
+          username: ${{ secrets.USERNAME_PREPROD }}
+          password: ${{ secrets.PASSWORD }}
+        run: sudo docker-compose up api-tests
 #        docker-compose up --exit-code-from api-tests || true
 
 #  allure-report:
