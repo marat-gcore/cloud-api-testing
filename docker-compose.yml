@@ -18,9 +18,9 @@ services:
       USERNAME_PREPROD: ${USERNAME_PREPROD}
       PASSWORD: ${PASSWORD}
 
-  allure-report:
-    image: "api-tests-image"
-    volumes:
-      - ./:/app
-    command: /bin/sh -c "allure generate allure-results --clean -o allure-report"
-    working_dir: /app
+#  allure-report:
+#    image: "api-tests-image"
+#    volumes:
+#      - ./:/app
+#    command: /bin/sh -c "allure generate allure-results --clean -o allure-report"
+#    working_dir: /app
