@@ -17,7 +17,7 @@ jobs:
 #          path: ./.github/gh-pages
 
       - name: Run api-tests via docker-compose
-        with:
+        env:
           url: ${{ secrets.PREPROD_URL }}
           auth: ${{ secrets.API_AUTH }}
           project: ${{ secrets.PROJECT_ID }}
