@@ -10,13 +10,13 @@ services:
       - ./:/app
     command: env && /bin/sh -c "pytest -sv --alluredir=allure-results"
     working_dir: /app
-#    environment:
-#      PREPROD_URL: ${PREPROD_URL}
-#      API_AUTH: ${API_AUTH}
-#      PROJECT_ID: ${PROJECT_ID}
-#      REGION_ID: ${REGION_ID}
-#      USERNAME_PREPROD: ${USERNAME_PREPROD}
-#      PASSWORD: ${PASSWORD}
+    environment:
+      PREPROD_URL: ${PREPROD_URL}
+      API_AUTH: ${API_AUTH}
+      PROJECT_ID: ${PROJECT_ID}
+      REGION_ID: ${REGION_ID}
+      USERNAME_PREPROD: ${USERNAME_PREPROD}
+      PASSWORD: ${PASSWORD}
 
 #  allure-report:
 #    image: "api-tests-image"
