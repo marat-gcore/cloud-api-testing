@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./:/app
-    command: env && /bin/sh -c "pytest -sv --alluredir=allure-results"
+    command: /bin/sh -c "pytest -sv --alluredir=allure-results"
     working_dir: /app
     environment:
       PREPROD_URL: ${PREPROD_URL}
