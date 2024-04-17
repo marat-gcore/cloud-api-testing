@@ -1,6 +1,6 @@
 name: API Tests
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
   run-tests:
