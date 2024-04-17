@@ -5,10 +5,10 @@ import allure
 import requests
 from api.api_requests import ImagesRequests, TasksRequests
 from assertions.assertion_base import BaseAssertion
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 
-load_dotenv()
+# load_dotenv()
 
 
 @pytest.fixture(scope='class')
