@@ -24,6 +24,7 @@ class BaseRequests:
 
 class ImagesRequests(BaseRequests):
     def get_images(self, params=None):
+        print(self.endpoint_images)
         return self.get_obj(self.endpoint_images, params)
 
     def get_image_by_id(self, obj_id, params=None):
