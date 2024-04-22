@@ -22,7 +22,8 @@ def client():
 @allure.title("Prepare a bearer token")
 def bearer_token(client):
     data = {"username": f"{os.getenv('USERNAME_PREPROD')}", "password": f"{os.getenv('PASSWORD')}"}
-    response = client.post(f"https://{os.getenv('API_AUTH')}", json=data)
+    response = client.post(f"https://api.preprod.world/iam/auth/jwt/login", json=data)
+    # response = client.post(f"https://{os.getenv('API_AUTH')}", json=data)
     return response.json().get("access")
 
 

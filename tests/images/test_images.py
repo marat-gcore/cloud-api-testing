@@ -15,7 +15,6 @@ class TestImages:
 
     def test_get_list_images(self, image_obj):
         response = image_obj.get_images()
-        print(response.request.url)
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.ListImages)
