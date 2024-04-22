@@ -86,16 +86,14 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
-#        with:
-#          name: allure-report
+        with:
+          name: allure-report
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3.0.1
         with:
           name: github-pages
-          path:
-            allure-report
-          retention-days: 1
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
