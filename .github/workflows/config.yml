@@ -2,10 +2,10 @@ name: API Tests
 
 on: workflow_dispatch
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+#permissions:
+#  contents: read
+#  pages: write
+#  id-token: write
 
 jobs:
   run-tests:
@@ -26,8 +26,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+#      - name: Download artifacts
+#        uses: actions/download-artifact@v4
 
       - name: Run api-tests
         env:
@@ -86,8 +86,8 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: allure-report
+#        with:
+#          name: allure-report
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3.0.1
@@ -102,6 +102,7 @@ jobs:
     needs: publish-report
 
     permissions:
+      contents: read
       pages: write
       id-token: write
 
