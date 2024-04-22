@@ -5,10 +5,6 @@ import allure
 import requests
 from api.api_requests import ImagesRequests, TasksRequests
 from assertions.assertion_base import BaseAssertion
-# from dotenv import load_dotenv
-
-
-# load_dotenv()
 
 
 @pytest.fixture(scope='class')
@@ -22,8 +18,7 @@ def client():
 @allure.title("Prepare a bearer token")
 def bearer_token(client):
     data = {"username": f"{os.getenv('USERNAME_PREPROD')}", "password": f"{os.getenv('PASSWORD')}"}
-    response = client.post(f"https://api.preprod.world/iam/auth/jwt/login", json=data)
-    # response = client.post(f"https://{os.getenv('API_AUTH')}", json=data)
+    response = client.post(os.getenv('API_AUTH'), json=data)
     return response.json().get("access")
 
 
