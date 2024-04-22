@@ -26,10 +26,10 @@ jobs:
         uses: actions/download-artifact@v4
       - name: Run api-tests
         env:
-          PREPROD_URL: ${{ secrets.PREPROD_URL }}
+          PREPROD_URL: https://cloud-api-preprod.cloud.gc.onl
+          PROJECT_ID: 516070
+          REGION_ID: 4
           API_AUTH: ${{ secrets.API_AUTH }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          REGION_ID: ${{ secrets.REGION_ID }}
           USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |          
@@ -49,10 +49,10 @@ jobs:
     steps:
       - name: Install Java and Allure
         run: |
-          sudo apt-get update && apt-get install -y openjdk-17-jdk-headless \
+          sudo apt-get update && sudo apt-get install -y openjdk-17-jdk-headless \
           wget \
           unzip \
-          && wget https://github.com/allure-framework/allure2/releases/download/2.28.0/allure-2.28.0.zip \
+          && sudo wget https://github.com/allure-framework/allure2/releases/download/2.28.0/allure-2.28.0.zip \
           && unzip allure-2.28.0.zip -d /opt/ \
           && ln -s /opt/allure-2.28.0/bin/allure /usr/bin/allure \
           && rm allure-2.28.0.zip
