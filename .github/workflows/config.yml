@@ -42,7 +42,6 @@ jobs:
           path:
             allure-results
           retention-days: 1
-        
 
   allure-report:
     runs-on: ubuntu-latest
