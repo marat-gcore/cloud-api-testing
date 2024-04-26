@@ -101,7 +101,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.https://marat-gcore.github.io/cloud-api-testing/ }}
+      url: ${{ steps.deployment.outputs.github-pages }}
 
     steps:
       - name: Deploy to GitHub Pages
