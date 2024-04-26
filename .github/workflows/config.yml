@@ -101,9 +101,14 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.github-pages }}
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
