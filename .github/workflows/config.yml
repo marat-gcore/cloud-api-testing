@@ -80,17 +80,34 @@ jobs:
             _site
           retention-days: 1
 
-  deploy:
+  publish-report:
     runs-on: ubuntu-latest
     needs: allure-report
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: _site
+
+      - name: GitHub-pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path:
+            github-pages
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish-report
     steps:
 #      - name: Checkout
 #        uses: actions/checkout@v4
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-#        with:
-#          name: allure-report
+        with:
+          name: github-pages
 
 #      - name: Setup Pages
 #        uses: actions/configure-pages@v5
