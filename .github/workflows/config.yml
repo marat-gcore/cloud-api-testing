@@ -105,7 +105,7 @@ jobs:
         with:
           token: ${{ secrets.CI_TOKEN }}
           branch: gh-pages
-          folder: allure-report
+          folder: ./allure-report
 #          clean: true
 
 #      - name: Download artifacts
