@@ -67,20 +67,25 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
 
-#      - name: Unzip artifact
-#        run: unzip -O UTF-8 -qq 'artifacts/allure-report.zip' -d dir
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: gh-pages
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+#      - name: Deploy to GitHub Pages
+#        uses: JamesIves/github-pages-deploy-action@4.1.5
+#        with:
+#          token: ${{ secrets.CI_TOKEN }}
+#          branch: gh-pages
+#          folder: allure-report
+#          clean: true
 
 
 
