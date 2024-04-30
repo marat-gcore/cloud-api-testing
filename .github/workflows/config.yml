@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-#      - name: Download artifacts
-#        uses: actions/download-artifact@v4
-
       - name: Run api-tests
         env:
           PREPROD_URL: https://cloud-api-preprod.cloud.gc.onl
@@ -70,52 +67,36 @@ jobs:
 
       - name: Generate Allure report
         run: |
-          allure generate -c allure-results -o _site
+          allure generate allure-results -o allure-report
 
       - name: Allure report
         uses: actions/upload-artifact@v4
         with:
-          name: _site
+          name: allure-report
           path:
-            _site
-          retention-days: 1
-
-  publish-report:
-    runs-on: ubuntu-latest
-    needs: allure-report
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: _site
-
-      - name: GitHub-pages
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-pages
-          path:
-            github-pages
+            artifacts/allure-report.zip
           retention-days: 1
 
   deploy:
     runs-on: ubuntu-latest
-    needs: publish-report
+    needs: allure-report
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: github-pages
 
-#      - name: Setup Pages
-#        uses: actions/configure-pages@v5
+      - name: Unzip artifact
+        run: unzip -O UTF-8 -qq 'artifacts/allure-report.zip' -d dir
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v2
-#        with:
-#          path: .
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dir
 
       - name: Deploy to GitHub Pages
         id: deployment
