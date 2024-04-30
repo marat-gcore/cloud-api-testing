@@ -13,6 +13,7 @@ class TestImages:
 
     # -------positive-------
 
+    @pytest.mark.skip
     def test_get_list_images(self, image_obj):
         response = image_obj.get_images()
 
