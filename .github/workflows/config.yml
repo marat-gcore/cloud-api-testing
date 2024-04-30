@@ -76,7 +76,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: github-pages
+          path: /home/runner/work/cloud-api-testing/cloud-api-testing/github-pages
 
       - name: Deploy to GitHub Pages
         id: deployment
