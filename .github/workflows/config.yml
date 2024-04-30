@@ -67,7 +67,7 @@ jobs:
 
       - name: Generate Allure report
         run: |
-          allure generate -c allure-results -o allure-report
+          /bin/sh -c "allure generate allure-results --clean -o allure-report
 
       - name: Allure report
         uses: actions/upload-artifact@v4
@@ -77,30 +77,33 @@ jobs:
             artifacts/allure-report.zip
           retention-days: 1
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: allure-report
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+#  deploy:
+#    runs-on: ubuntu-latest
+#    needs: allure-report
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.deployment.outputs.page_url }}
+#    steps:
+#      - name: Download artifacts
+#        uses: actions/download-artifact@v4
+#
+#      - name: Unzip artifact
+#        run: unzip -O UTF-8 -qq 'artifacts/allure-report.zip' -d dir
+#
+#      - name: Setup Pages
+#        uses: actions/configure-pages@v4
+#
+#      - name: Upload Pages artifact
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          path: dir
+#
+#      - name: Deploy to GitHub Pages
+#        id: deployment
+#        uses: actions/deploy-pages@v4
 
-      - name: Unzip artifact
-        run: unzip -O UTF-8 -qq 'artifacts/allure-report.zip' -d dir
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dir
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
 
 #      - name: Deploy to GitHub Pages
 #        uses: JamesIves/github-pages-deploy-action@4.1.5
