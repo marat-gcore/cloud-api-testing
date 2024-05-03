@@ -2,7 +2,8 @@ import os
 import time
 import pytest
 import allure
-import requests
+# import requests
+from api.api_session import Session
 from api.api_requests import ImagesRequests, TasksRequests
 from assertions.assertion_base import BaseAssertion
 
@@ -10,8 +11,8 @@ from assertions.assertion_base import BaseAssertion
 @pytest.fixture(scope='class')
 @allure.title("Prepare HTTP client")
 def client():
-    yield requests.Session()
-    requests.Session().close()
+    yield Session()
+    Session().close()
 
 
 @pytest.fixture(scope='class')
