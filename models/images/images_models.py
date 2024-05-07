@@ -12,19 +12,20 @@ class Image(BaseModel):
     project_id: int
     os_version: Optional[str] = None
     architecture: str
-    min_ram: int
+    min_ram: int = Field(ge=0)
     hw_machine_type: Optional[str] = None
+    hw_firmware_type: Optional[str] = None
     status: str
     id: str
     updated_at: str
     region_id: int
     disk_format: str
     region: str
-    metadata_detailed: list[str] = None
+    metadata_detailed: list[dict] = None
     display_order: Optional[int] = None
     os_distro: Optional[str] = None
     size: int
-    min_disk: int
+    min_disk: int = Field(ge=0)
 
 
 class RequestSuccessful(BaseModel):
