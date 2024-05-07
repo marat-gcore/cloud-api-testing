@@ -3,7 +3,6 @@ import logging
 
 from api.api_session import Session
 from api.api_data import TokenType
-from typing import Tuple
 
 logger = logging.getLogger("logger_api_client")
 
@@ -13,14 +12,14 @@ class APIClient:
     IMAGES = f"/v1/images/{os.getenv('PROJECT_ID')}/{os.getenv('REGION_ID')}"
 
     def __init__(self, base_url: str, token: str):
-        logger.info("Session initialized.")
+        logger.info(f"\nSession initialized")
         self.base_url = base_url
         self.token = token
         self.session = Session()
 
     def get_header(self, key: str) -> str:
         if not self.session.headers.get(key):
-            logger.error(f"The expected key '{key}' is missing in headers.")
+            logger.error(f"\nThe expected key '{key}' is missing in headers.")
             raise ValueError(f"The expected key '{key}' is missing in headers.")
         header_value: str | bytes = self.session.headers[key]
         if isinstance(header_value, bytes):
@@ -34,7 +33,7 @@ class APIClient:
         logs_value = value
         if key == "refresh":
             logs_value = "****"
-        logger.debug(f'Setting header "{key}" as "{logs_value}"')
+        logger.debug(f'\nSetting header "{key}" as "{logs_value}"')
         self.session.headers.update({key: value})
 
     def set_session_authentication(self):

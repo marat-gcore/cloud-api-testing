@@ -1,5 +1,9 @@
+import logging
+
 from pydantic import TypeAdapter
 from logs.custom_errors import CodeLogMsg
+
+logger = logging.getLogger("logger_assertions")
 
 
 class BaseAssertion:
@@ -25,6 +29,8 @@ class BaseAssertion:
             for item in response_body['results']:
                 if request_value == item.get(request_key):
                     return item.get("id")
-            assert False, "The object was not created"
+            logger.debug("\nNo objects were found")
+            assert False
         else:
-            assert False, "The object was not created"
+            logger.debug("\nNo objects were found")
+            assert False

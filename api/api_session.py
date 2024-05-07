@@ -34,16 +34,16 @@ class Session(requests.Session):
         headers.update(self.headers)
 
         if 'Authorization' not in headers:
-            logger.error(f"Authorization header is missing in the request to {url}")
+            logger.error(f"\nAuthorization header is missing in the request to {url}")
             raise ValueError("Authorization header is missing")
 
-        logger.debug(f"Request: {method.upper()} to {url} with {kwargs}")
+        logger.debug(f"\nRequest: {method.upper()} to {url} with {kwargs}")
         # logger.debug(f"Request headers: {headers}")
 
         if json_data:
-            logger.info(f"Request body:\n{json.dumps(json_data, indent=2, sort_keys=True)}")
+            logger.info(f"\nRequest body:\n{json.dumps(json_data, indent=2, sort_keys=True)}")
         if raw_data:
-            logger.info(f"Request body:\n{raw_data}")
+            logger.info(f"\nRequest body:\n{raw_data}")
 
         response = super().request(
             method,
