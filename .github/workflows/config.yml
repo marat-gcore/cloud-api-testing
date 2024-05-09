@@ -101,8 +101,6 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: allure-report
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
