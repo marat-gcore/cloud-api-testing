@@ -76,7 +76,7 @@ jobs:
         continue-on-error: true
 
       - name: Copy history to allure-results
-        run: sudo cp -r ./allure-history allure-results
+        run: sudo cp -r ./allure-history/history allure-results
 
       - name: Generate Allure report
         run: |
@@ -88,6 +88,14 @@ jobs:
           name: allure-report
           path:
             allure-report
+          retention-days: 10
+
+      - name: Upload artifact2
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path:
+            allure-results-history
           retention-days: 10
 
 
