@@ -78,7 +78,7 @@ jobs:
         continue-on-error: true
 
       - name: Copy history to allure-results
-        run: sudo cp -r /home/runner/work/cloud-api-testing/cloud-api-testing/allure-history/history/ allure-results
+        run: sudo unzip allure-history.zip && sudo cp -r ./allure-history/history/ allure-results
 
       - name: Generate Allure report
         run: |
