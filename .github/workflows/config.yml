@@ -35,14 +35,10 @@ jobs:
 
       - name: Run api-tests
         env:
-          PREPROD_URL: https://cloud-api-preprod.cloud.gc.onl
-          PROJECT_ID: 516070
-          REGION_ID: 4
-          API_AUTH: ${{ secrets.API_AUTH }}
           USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |          
-          pytest -sv --alluredir=allure-results
+          pytest -sv
         continue-on-error: true
 
       - name: Generate Allure report

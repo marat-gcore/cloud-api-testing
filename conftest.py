@@ -15,12 +15,45 @@ def pytest_configure():
     logging.basicConfig(level=logging.DEBUG)
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--url",
+        action="store",
+        default="https://cloud-api-preprod.cloud.gc.onl",
+        help="Base url for requests"
+    )
+    parser.addoption(
+        "--project",
+        action="store",
+        default="516070",
+        help="ID of the project"
+    )
+    parser.addoption(
+        "--region",
+        action="store",
+        default="4",
+        help="ID of the region"
+    )
+
+
 @pytest.fixture(scope='class')
-@allure.title("Prepare a bearer token")
+@allure.title("Prepare an ID of the project")
+def project_id(request):
+    return request.config.getoption("--project")
+
+
+@pytest.fixture(scope='class')
+@allure.title("Prepare an ID of the region")
+def region_id(request):
+    return request.config.getoption("--region")
+
+
+@pytest.fixture(scope='class')
+@allure.title("Getting a bearer token...")
 def bearer_token():
     username = os.getenv('USERNAME_PREPROD')
     password = os.getenv('PASSWORD')
-    auth_url = os.getenv('API_AUTH')
+    auth_url = "https://api.preprod.world/iam/auth/jwt/login"
     data = {
         "username": f"{username}",
         "password": f"{password}"
@@ -45,24 +78,24 @@ def bearer_token():
 
 @pytest.fixture(scope='class')
 @allure.title("Prepare HTTP client for requests")
-def client_images(bearer_token):
-    base_url = os.getenv('PREPROD_URL')
+def client_images(bearer_token, request):
+    base_url = request.config.getoption("--url")
 
-    img_req = ImagesRequests(base_url=f"{base_url}", token=bearer_token)
-    img_req.set_session_authentication()
-    yield img_req
+    client = ImagesRequests(base_url=f"{base_url}", token=bearer_token)
+    client.set_session_authentication()
+    yield client
     logger.info(f"\nSession was closed")
-    img_req.session.close()
+    client.session.close()
 
 
 @pytest.fixture(scope='class')
 @allure.title("Prepare a task object")
-def client_tasks(bearer_token):
-    base_url = os.getenv('PREPROD_URL')
+def client_tasks(bearer_token, request):
+    base_url = request.config.getoption("--url")
 
-    task_req = TasksRequests(base_url=f"{base_url}", token=bearer_token)
-    task_req.set_session_authentication()
-    return task_req
+    client = TasksRequests(base_url=f"{base_url}", token=bearer_token)
+    client.set_session_authentication()
+    return client
 
 
 @pytest.fixture(scope='class')
@@ -76,8 +109,12 @@ def img_request_body():
 
 @pytest.fixture(scope='class')
 @allure.title("Create image")
-def create_img(client_images, client_tasks, img_request_body):
-    response_img = client_images.create_image(img_request_body)
+def create_img(client_images, client_tasks, img_request_body, project_id, region_id):
+    response_img = client_images.create_image(
+        project_id=project_id,
+        region_id=region_id,
+        request_body=img_request_body
+    )
     response_body = response_img.json()
     task_id = ''.join(response_body.get("tasks"))
 
@@ -87,21 +124,21 @@ def create_img(client_images, client_tasks, img_request_body):
         response = client_tasks.get_task_by_id(task_id)
         task_state = response.json()["state"]
         if task_state == "FINISHED":
-            logger.debug("\nThe image was created, 'task_state' is FINISHED")
+            logger.debug("\nThe image was created")
             return response_img
         else:
-            logger.debug("\nCreating an image... 'task_state' is not FINISHED yet")
+            logger.debug("\nCreating an image... \n'task_state' is not FINISHED yet")
             time.sleep(5)
     logger.error("\nImage creation failed by time out")
 
 
 @pytest.fixture(scope='class')
 @allure.title("Prepare image ID / Clean image")
-def image_id(client_images, create_img, img_request_body):
+def image_id(client_images, create_img, img_request_body, project_id, region_id):
     request_key = "name"
     request_value = img_request_body.get(request_key)
 
-    response = client_images.get_images()
+    response = client_images.get_images(project_id=project_id, region_id=region_id)
     img_id = BaseAssertion.assert_obj_found(response, request_key, request_value)
     return img_id
 

@@ -1,4 +1,3 @@
-import os
 import logging
 
 from api.api_session import Session
@@ -8,9 +7,6 @@ logger = logging.getLogger("logger_api_client")
 
 
 class APIClient:
-    TASKS = "/v1/tasks"
-    IMAGES = f"/v1/images/{os.getenv('PROJECT_ID')}/{os.getenv('REGION_ID')}"
-
     def __init__(self, base_url: str, token: str):
         logger.info(f"\nSession initialized")
         self.base_url = base_url
