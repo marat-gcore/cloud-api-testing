@@ -28,7 +28,7 @@ jobs:
           if_no_artifact_found: fail
 
       - name: Copy history
-        run: sudo mkdir allure-history && sudo cp ./artifacts/history/ allure-history
+        run: sudo mkdir allure-history && sudo cp -r ./artifacts/history/ allure-history
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
