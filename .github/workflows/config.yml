@@ -22,8 +22,7 @@ jobs:
           branch: main
           name: allure-report
           path: ./artifacts
-          repo: ${{ marat-gcore/cloud-api-testing }}
-          check_artifacts: false
+          check_artifacts: true
           search_artifacts: false
           skip_unpack: false
           if_no_artifact_found: fail
