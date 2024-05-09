@@ -66,8 +66,6 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: allure-history
 
       - name: Run api-tests
         env:
@@ -78,7 +76,7 @@ jobs:
         continue-on-error: true
 
       - name: Copy history to allure-results
-        run: sudo unzip /home/runner/work/cloud-api-testing/cloud-api-testing/allure-history.zip && sudo cp -r ./allure-history/history/ allure-results
+        run: sudo cp -r ./allure-history allure-results
 
       - name: Generate Allure report
         run: |
