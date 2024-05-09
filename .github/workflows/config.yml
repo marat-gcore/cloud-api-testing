@@ -8,68 +8,103 @@ permissions:
   id-token: write
 
 jobs:
-  run-tests:
-    runs-on: ubuntu-latest
-
+  download-previous-report:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-
-      - name: Install Java and Allure
+      - name: Get run ID
+        id: get-run-id
         run: |
-          sudo apt-get update && sudo apt-get install -y openjdk-17-jdk-headless \
-          wget \
-          unzip \
-          && sudo wget https://github.com/allure-framework/allure2/releases/download/2.28.0/allure-2.28.0.zip \
-          && sudo unzip allure-2.28.0.zip -d /opt/ \
-          && sudo ln -s /opt/allure-2.28.0/bin/allure /usr/bin/allure \
-          && sudo rm allure-2.28.0.zip
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run api-tests
+          OTHER_REPO="${{ github.repository }}"
+          WF_NAME="run-tests"
+          RUN_ID=`gh run --repo ${OTHER_REPO} list --workflow ${WF_NAME} --json databaseId --jq .[0].databaseId`
+          echo "Detected latest run id of ${RUN_ID} for workflow ${WF_NAME}"
+          echo "run-id=${RUN_ID}" >> "$GITHUB_OUTPUT"
         env:
-          USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-        run: |          
-          pytest -sv
-        continue-on-error: true
+          GH_TOKEN: ${{ secrets.CI_TOKEN }}
 
-      - name: Generate Allure report
-        run: |
-          allure generate allure-results --clean -o allure-report
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path:
-            allure-report
-          retention-days: 1
-
-  deploy-report:
-    runs-on: ubuntu-latest
-    needs: run-tests
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Download artifacts
+      - name: Download artifact
         uses: actions/download-artifact@v4
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./allure-report
+          name: allure-report # Match name used in test.yml upload artifact step
+          github-token: ${{ secrets.CI_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.get-run-id.outputs.run-id }}
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Show downloaded files
+        run: ls -la
+
+#  download-history:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/download-artifact@v4
+#        with:
+#          name: allure-report
+#          github-token: ${{ secrets.CI_TOKEN }}
+#          repository: marat-gcore/cloud-api-testing
+#          run-id: 1234
+
+#  run-tests:
+#    runs-on: ubuntu-latest
+#    needs: download-history
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: "3.12"
+#
+#      - name: Install Java and Allure
+#        run: |
+#          sudo apt-get update && sudo apt-get install -y openjdk-17-jdk-headless \
+#          wget \
+#          unzip \
+#          && sudo wget https://github.com/allure-framework/allure2/releases/download/2.28.0/allure-2.28.0.zip \
+#          && sudo unzip allure-2.28.0.zip -d /opt/ \
+#          && sudo ln -s /opt/allure-2.28.0/bin/allure /usr/bin/allure \
+#          && sudo rm allure-2.28.0.zip
+#
+#      - name: Install dependencies
+#        run: pip install -r requirements.txt
+#
+#      - name: Run api-tests
+#        env:
+#          USERNAME_PREPROD: ${{ secrets.USERNAME_PREPROD }}
+#          PASSWORD: ${{ secrets.PASSWORD }}
+#        run: |
+#          pytest -sv
+#        continue-on-error: true
+#
+#      - name: Generate Allure report
+#        run: |
+#          allure generate allure-results --clean -o allure-report
+#
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-report
+#          path:
+#            allure-report
+#          retention-days: 1
+
+#  deploy-report:
+#    runs-on: ubuntu-latest
+#    needs: run-tests
+#
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.deployment.outputs.page_url }}
+#
+#    steps:
+#      - name: Download artifacts
+#        uses: actions/download-artifact@v4
+#
+#      - name: Upload Pages artifact
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          path: ./allure-report
+#
+#      - name: Deploy to GitHub Pages
+#        id: deployment
+#        uses: actions/deploy-pages@v4
