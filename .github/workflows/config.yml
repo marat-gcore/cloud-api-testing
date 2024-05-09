@@ -11,7 +11,7 @@ jobs:
   download-history:
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
+      - name: Download allure-report from previous workflow
         id: download-artifact
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -27,15 +27,17 @@ jobs:
           skip_unpack: false
           if_no_artifact_found: fail
 
+      - run: sudo mkdir allure-results && sudo cp ./artifacts/history/* allure-results
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path:
+            allure-results
+          retention-days: 1
 
 
-
-#      - uses: actions/download-artifact@v4
-#        with:
-#          name: allure-report
-#          github-token: ${{ secrets.CI_TOKEN }}
-#          repository: marat-gcore/cloud-api-testing
-#          run-id: 1234
 
 #  run-tests:
 #    runs-on: ubuntu-latest
@@ -80,7 +82,7 @@ jobs:
 #          name: allure-report
 #          path:
 #            allure-report
-#          retention-days: 1
+#          retention-days: 10
 
 #  deploy-report:
 #    runs-on: ubuntu-latest
