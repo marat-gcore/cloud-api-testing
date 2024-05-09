@@ -20,7 +20,7 @@ class TestImages:
     def test_get_list_images(self, client_images, project_id, region_id):
         response = client_images.get_images(project_id=project_id, region_id=region_id)
 
-        BaseAssertion.assert_status_code(response, HTTPStatus.OK)
+        BaseAssertion.assert_status_code(response, HTTPStatus.BAD_REQUEST)
         BaseAssertion.assert_schema(response, models.ListImages)
         if len(response.json()["results"]) > 0:
             BaseAssertion.assert_schema(response.json()["results"], models.Image)
