@@ -78,10 +78,15 @@ def bearer_token():
 
 @pytest.fixture(scope='class')
 @allure.title("Prepare HTTP client for requests")
-def client_images(bearer_token, request):
+def client_images(bearer_token, project_id, region_id, request):
     base_url = request.config.getoption("--url")
 
-    client = ImagesRequests(base_url=f"{base_url}", token=bearer_token)
+    client = ImagesRequests(
+        base_url=f"{base_url}",
+        token=bearer_token,
+        project_id=project_id,
+        region_id=region_id
+    )
     client.set_session_authentication()
     yield client
     logger.info(f"\nSession was closed")
@@ -109,12 +114,8 @@ def img_request_body():
 
 @pytest.fixture(scope='class')
 @allure.title("Create image")
-def create_img(client_images, client_tasks, img_request_body, project_id, region_id):
-    response_img = client_images.create_image(
-        project_id=project_id,
-        region_id=region_id,
-        request_body=img_request_body
-    )
+def create_img(client_images, client_tasks, img_request_body):
+    response_img = client_images.create_image(img_request_body)
     response_body = response_img.json()
     task_id = ''.join(response_body.get("tasks"))
 
@@ -134,11 +135,11 @@ def create_img(client_images, client_tasks, img_request_body, project_id, region
 
 @pytest.fixture(scope='class')
 @allure.title("Prepare image ID / Clean image")
-def image_id(client_images, create_img, img_request_body, project_id, region_id):
+def image_id(client_images, create_img, img_request_body):
     request_key = "name"
     request_value = img_request_body.get(request_key)
 
-    response = client_images.get_images(project_id=project_id, region_id=region_id)
+    response = client_images.get_images()
     img_id = BaseAssertion.assert_obj_found(response, request_key, request_value)
     return img_id
 

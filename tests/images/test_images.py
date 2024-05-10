@@ -17,8 +17,8 @@ class TestImages:
     # -------positive-------
 
     # @pytest.mark.skip
-    def test_get_list_images(self, client_images, project_id, region_id):
-        response = client_images.get_images(project_id=project_id, region_id=region_id)
+    def test_get_list_images(self, client_images):
+        response = client_images.get_images()
 
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.ListImages)
@@ -27,13 +27,9 @@ class TestImages:
 
     # @pytest.mark.skip
     @pytest.mark.parametrize("params", ['private', 'public', 'shared'])
-    def test_get_list_images_by_visibility_param(self, client_images, project_id, region_id, params):
+    def test_get_list_images_by_visibility_param(self, client_images, params):
         query_param = {'visibility': f'{params}'}
-        response = client_images.get_images(
-            project_id=project_id,
-            region_id=region_id,
-            params=query_param
-        )
+        response = client_images.get_images(query_param)
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         if len(response.json()["results"]) > 0:
             for item in response.json()['results']:
@@ -45,17 +41,13 @@ class TestImages:
         BaseAssertion.assert_schema(create_img, models.RequestSuccessful)
 
     # @pytest.mark.skip
-    def test_get_image_by_id(self, client_images, project_id, region_id, image_id):
-        response = client_images.get_image_by_id(
-            project_id=project_id,
-            region_id=region_id,
-            obj_id=image_id
-        )
+    def test_get_image_by_id(self, client_images, image_id):
+        response = client_images.get_image_by_id(image_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.Image)
 
     # @pytest.mark.skip
-    def test_patch_update_image(self, client_images, img_request_body, image_id, project_id, region_id):
+    def test_patch_update_image(self, client_images, img_request_body, image_id):
         request_body = {
             'name': 'qa-img-changed'
         }
@@ -63,8 +55,6 @@ class TestImages:
         request_value = request_body.get(request_key)
 
         response = client_images.update_image(
-            project_id=project_id,
-            region_id=region_id,
             obj_id=image_id,
             request_body=request_body
         )
@@ -72,101 +62,67 @@ class TestImages:
         BaseAssertion.assert_schema(response, models.Image)
         time.sleep(2)
 
-        response = client_images.get_image_by_id(
-            project_id=project_id,
-            region_id=region_id,
-            obj_id=image_id
-        )
+        response = client_images.get_image_by_id(image_id)
         response_body = response.json()
         assert request_value == response_body.get(request_key)
 
     # @pytest.mark.skip
-    def test_delete_image(self, client_images, image_id, project_id, region_id):
-        response = client_images.delete_image(
-            project_id=project_id,
-            region_id=region_id,
-            obj_id=image_id
-        )
+    def test_delete_image(self, client_images, image_id):
+        response = client_images.delete_image(image_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.OK)
         BaseAssertion.assert_schema(response, models.RequestSuccessful)
         time.sleep(2)
 
-        response = client_images.get_image_by_id(
-            project_id=project_id,
-            region_id=region_id,
-            obj_id=image_id
-        )
+        response = client_images.get_image_by_id(image_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
         BaseAssertion.assert_schema(response, models.NotFound)
 
     # -------negative-------
 
     # @pytest.mark.skip
-    def test_get_list_images_invalid_visibility_param(self, client_images, project_id, region_id):
+    def test_get_list_images_invalid_visibility_param(self, client_images):
         query_param = {'visibility': 'somevalue'}
-        response = client_images.get_images(
-            project_id=project_id,
-            region_id=region_id,
-            params=query_param
-        )
+        response = client_images.get_images(query_param)
         BaseAssertion.assert_status_code(response, HTTPStatus.BAD_REQUEST)
         BaseAssertion.assert_schema(response, models.BadRequest)
 
     # @pytest.mark.skip
-    def test_get_image_not_exist_id(self, client_images, project_id, region_id):
+    def test_get_image_not_exist_id(self, client_images):
         image_id = "23003df3-e509-4bc9-ad4b-5f77ad40da691"
-        response = client_images.get_image_by_id(
-            project_id=project_id,
-            region_id=region_id,
-            obj_id=image_id
-        )
+        response = client_images.get_image_by_id(image_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
         BaseAssertion.assert_schema(response, models.NotFound)
 
     # @pytest.mark.skip
-    def test_post_create_image_no_request_body(self, client_images, project_id, region_id):
+    def test_post_create_image_no_request_body(self, client_images):
         request_body = None
-        response = client_images.create_image(
-            project_id=project_id,
-            region_id=region_id,
-            request_body=request_body
-        )
+        response = client_images.create_image(request_body)
         BaseAssertion.assert_status_code(response, HTTPStatus.BAD_REQUEST)
         BaseAssertion.assert_schema(response, models.PostBadRequest)
 
     # @pytest.mark.skip
-    def test_post_create_image_no_required_params(self, client_images, project_id, region_id):
+    def test_post_create_image_no_required_params(self, client_images):
         request_body = {}
-        response = client_images.create_image(
-            project_id=project_id,
-            region_id=region_id,
-            request_body=request_body
-        )
+        response = client_images.create_image(request_body)
         BaseAssertion.assert_status_code(response, HTTPStatus.BAD_REQUEST)
         BaseAssertion.assert_schema(response, models.BadRequest)
 
     # @pytest.mark.skip
-    def test_post_create_image_not_exist_volume(self, client_images, project_id, region_id):
+    def test_post_create_image_not_exist_volume(self, client_images):
         request_body = {
             'name': 'qa-test-image',
             'volume_id': 'fbfb26d1-37d9-4bd9-82f6-e1d0fd3091c89'
         }
 
-        response = client_images.create_image(
-            project_id=project_id,
-            region_id=region_id,
-            request_body=request_body
-        )
+        response = client_images.create_image(request_body)
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
         BaseAssertion.assert_schema(response, models.NotFound)
 
     # @pytest.mark.skip
-    def test_patch_not_exist_id(self, client_images, img_request_body, project_id, region_id):
+    def test_patch_not_exist_id(self, client_images, img_request_body):
         img_id = "9726377c-2991-45be-8fce-ff9521cae512"
 
         response = client_images.update_image(
-            project_id=project_id,
-            region_id=region_id,
             obj_id=img_id,
             request_body=img_request_body
         )
@@ -174,13 +130,9 @@ class TestImages:
         BaseAssertion.assert_schema(response, models.NotFound)
 
     # @pytest.mark.skip
-    def test_delete_not_exist_image(self, client_images, project_id, region_id):
+    def test_delete_not_exist_image(self, client_images):
         img_id = "9726377c-2991-45be-8fce-ff9521cae512"
 
-        response = client_images.delete_image(
-            project_id=project_id,
-            region_id=region_id,
-            obj_id=img_id
-        )
+        response = client_images.delete_image(img_id)
         BaseAssertion.assert_status_code(response, HTTPStatus.NOT_FOUND)
         BaseAssertion.assert_schema(response, models.NotFound)
