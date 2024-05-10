@@ -13,7 +13,6 @@ class Session(requests.Session):
     """
     requests.Session with verbose logging
     """
-
     @staticmethod
     def get_current_data() -> str:
         now: datetime = datetime.now(timezone.utc)
@@ -30,7 +29,11 @@ class Session(requests.Session):
             url = url.decode("utf-8")
 
         headers = kwargs.pop("headers", {})
-        headers.update({"X-Request-ID": str(uuid.uuid4()), "Date": self.get_current_data()})
+        headers.update({
+            "X-Request-ID": str(uuid.uuid4()),
+            "Date": self.get_current_data(),
+            "User-Agent": "api-tests"
+        })
         headers.update(self.headers)
 
         if 'Authorization' not in headers:
